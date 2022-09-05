@@ -127,10 +127,10 @@ UICorner.CornerRadius = UDim.new(0, 4)
 UICorner.Parent = Window
 PerlinMusicBox.Parent = owner.PlayerGui
 function rand(lower, greater)
-	return lower + math.random()  * (greater - lower);
+    return lower + math.random() * (greater - lower)
 end
-local remote = Instance.new("RemoteEvent",owner.PlayerGui)
-local sf = Instance.new("Folder",owner.PlayerGui)
+local remote = Instance.new("RemoteEvent", owner.PlayerGui)
+local sf = Instance.new("Folder", owner.PlayerGui)
 sf.Name = "PerlinNoiseSounds"
 local sound1 = Instance.new("Sound")
 sound1.SoundId = "rbxasset://sounds/bass.wav"
@@ -140,91 +140,94 @@ local sound2 = Instance.new("Sound")
 sound2.SoundId = "rbxasset://sounds/electronicpingshort.wav"
 sound2.Volume = 0.5
 sound2.Looped = true
-local npc=6
-local c=32
+local npc = 6
+local c = 32
 local song = {}
 local songi2 = {}
 local mode = "BothInstruments"
 local modeb = true
 local pfe = false
-function music_make_note(x,s,l,j)
-	local n = math.noise(x,j,s)
-	return l+n
+function music_make_note(x, s, l, j)
+    local n = math.noise(x, j, s)
+    return l + n
 end
-function music_make_chunk(x,s)
-	local ch={}
-	local l=1
-	local jx=rand(-65536,65536)
-	for i = 1, npc do
-		local n = music_make_note(x+i,s,l,jx)
-		table.insert(ch,n)
-		l=n
-	end
-	return ch
+function music_make_chunk(x, s)
+    local ch = {}
+    local l = 1
+    local jx = rand(-65536, 65536)
+    for i = 1, npc do
+        local n = music_make_note(x + i, s, l, jx)
+        table.insert(ch, n)
+        l = n
+    end
+    return ch
 end
 function regenerate(m)
-	local noise_seed = rand(-32,32) -- thank god for precision
-	local jx = rand(-65536,65536)
-	song = {}
-	songi2 = {}
-	if m == "OneInstrument" then
-		for i = 1, c do
-			local ch = music_make_chunk(i,noise_seed)
-			for j = 1, npc do
-				table.insert(song,ch[j])
-			end
-			task.wait()
-		end
-	elseif m == "BothInstruments" then
-		for i = 1, c do
-			local ch = music_make_chunk(i,noise_seed)
-			local ch2 = music_make_note(i,noise_seed,songi2[i] or 1,jx)
-			for j = 1, npc do
-				table.insert(song,ch[j])
-				table.insert(songi2,ch2)
-			end
-			task.wait()
-		end
-	end
+    local noise_seed = rand(-32, 32) -- thank god for precision
+    local jx = rand(-65536, 65536)
+    song = {}
+    songi2 = {}
+    if m == "OneInstrument" then
+        for i = 1, c do
+            local ch = music_make_chunk(i, noise_seed)
+            for j = 1, npc do
+                table.insert(song, ch[j])
+            end
+            task.wait()
+        end
+    elseif m == "BothInstruments" then
+        for i = 1, c do
+            local ch = music_make_chunk(i, noise_seed)
+            local ch2 = music_make_note(i, noise_seed, songi2[i] or 1, jx)
+            for j = 1, npc do
+                table.insert(song, ch[j])
+                table.insert(songi2, ch2)
+            end
+            task.wait()
+        end
+    end
 end
 function play(m)
-	if m == "OneInstrument" then
-		for i = 1, #song do
-			sound1.TimePosition = 0
-			local p = song[i]
-			local sound = sound1:Clone()
-			sound.PlayOnRemove = true
-			sound.Pitch = math.clamp(p,0.6,20)
-			sound.Parent = sf
-			sound:Destroy()
-			task.wait(0.2)
-		end
-	elseif m == "BothInstruments" then
-		for i = 1, #song do
-			local p = song[i]
-			local p2 = songi2[i]
-			local sound = sound1:Clone()
-			sound.PlayOnRemove = true
-			sound.Pitch = math.clamp(p,0.6,20)
-			sound.Parent = sf
-			local sound_1 = sound2:Clone()
-			sound_1.PlayOnRemove = true
-			sound_1.Pitch = math.clamp(p2,0.6,20)
-			sound_1.Parent = sf
-			sound_1:Destroy()
-			sound:Destroy()
-			task.wait(0.2)
-		end
-	end
+    if m == "OneInstrument" then
+        for i = 1, #song do
+            sound1.TimePosition = 0
+            local p = song[i]
+            local sound = sound1:Clone()
+            sound.PlayOnRemove = true
+            sound.Pitch = math.clamp(p, 0.6, 20)
+            sound.Parent = sf
+            sound:Destroy()
+            task.wait(0.2)
+        end
+    elseif m == "BothInstruments" then
+        for i = 1, #song do
+            local p = song[i]
+            local p2 = songi2[i]
+            local sound = sound1:Clone()
+            sound.PlayOnRemove = true
+            sound.Pitch = math.clamp(p, 0.6, 20)
+            sound.Parent = sf
+            local sound_1 = sound2:Clone()
+            sound_1.PlayOnRemove = true
+            sound_1.Pitch = math.clamp(p2, 0.6, 20)
+            sound_1.Parent = sf
+            sound_1:Destroy()
+            sound:Destroy()
+            task.wait(0.2)
+        end
+    end
 end
 PerlinMusicBox.Name = game:GetService("HttpService"):GenerateGUID(false)
 -- textbutton: play
 -- textbutton1: generate
 -- PlayEveryone: play for all
 remote.Name = game:GetService("HttpService"):GenerateGUID(false)
-NLS([[
+NLS(
+    [[
 local remote = script.Parent
-local gui = owner.PlayerGui["]]..PerlinMusicBox.Name..[["]
+local gui = owner.PlayerGui["]] ..
+        PerlinMusicBox.Name ..
+            [["]
 local play = gui.Window.Play
 local gen = gui.Window.Generate
 local npc = gui.Window.NoteCount
@@ -284,37 +287,41 @@ function dragify(Frame)
     end)
 end
 dragify(gui.Window)
-]],remote)
-remote.OnServerEvent:Connect(function(plr,x,y)
-	if x == 1 then
-		print("Playing")
-		play(mode)
-	elseif x == 2 then
-		print("Generating")
-		regenerate(mode)
-		print("Finished")
-	elseif x == 3 then
-		pfe = not pfe
-		if pfe then
-			PlayEveryone.Text = "[X] Play for everyone"
-			sf.Parent = owner.Character.Head
-		else
-			PlayEveryone.Text = "[ ] Play for everyone"
-			sf.Parent = owner.PlayerGui
-		end
-	elseif x == 4 then
-		c = tonumber(y)
-	elseif x == 5 then
-		npc = tonumber(y)
-	elseif x == 6 then
-		modeb = not modeb
-		if modeb then
-			mode = "BothInstruments"
-			OneInst.Text = "[ ] Only use one instrument"
-		else
-			mode = "OneInstrument"
-			OneInst.Text = "[X] Only use one instrument"
-		end
-		print("Switched mode to",mode)
-	end
-end)
+]],
+    remote
+)
+remote.OnServerEvent:Connect(
+    function(plr, x, y)
+        if x == 1 then
+            print("Playing")
+            play(mode)
+        elseif x == 2 then
+            print("Generating")
+            regenerate(mode)
+            print("Finished")
+        elseif x == 3 then
+            pfe = not pfe
+            if pfe then
+                PlayEveryone.Text = "[X] Play for everyone"
+                sf.Parent = owner.Character.Head
+            else
+                PlayEveryone.Text = "[ ] Play for everyone"
+                sf.Parent = owner.PlayerGui
+            end
+        elseif x == 4 then
+            c = tonumber(y)
+        elseif x == 5 then
+            npc = tonumber(y)
+        elseif x == 6 then
+            modeb = not modeb
+            if modeb then
+                mode = "BothInstruments"
+                OneInst.Text = "[ ] Only use one instrument"
+            else
+                mode = "OneInstrument"
+                OneInst.Text = "[X] Only use one instrument"
+            end
+            print("Switched mode to", mode)
+        end
+    end
+)
